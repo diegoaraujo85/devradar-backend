@@ -3,6 +3,8 @@ const Dev = require("../models/Dev");
 
 const parseStringAsArray = require("../utils/parseStringAsArray");
 
+const { findConnections, sendMessage } = require("../websocket");
+
 //index, store, update, destroy, show
 
 module.exports = {
@@ -36,6 +38,15 @@ module.exports = {
         techs: techsArray,
         location
       });
+
+      //filtrar as conexoes que estao a no maximo 10km
+      //e q o dev tenha pelo menos umas das techs filtradas
+      const sendSocketMessageTo = findConnections(
+        { latitude, longitude },
+        techsArray,
+      )
+
+      sendMessage(sendSocketMessageTo, "new-dev", dev);
     }
 
     return response.json(dev);
